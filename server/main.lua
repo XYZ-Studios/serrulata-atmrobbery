@@ -1,7 +1,8 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local CoolDown = false
 local MoneyType = Config.MoneyType
 local HackItem = Config.HackItem
+
+local CoolDown = false
 
 RegisterServerEvent('serrulata-atmrobbery:server:timer', function()
     CoolDown = true
@@ -28,5 +29,17 @@ RegisterNetEvent("serrulata-atmrobbery:server:success",function()
     local Player = QBCore.Functions.GetPlayer(src)
     
     Player.Functions.RemoveItem(HackItem, 1)
-    Player.Functions.AddMoney(MoneyType, math.random(Config.PaymentMin, Config.PaymentMax))
+    Player.Functions.AddMoney('cash', math.random(Config.PaymentMin, Config.PaymentMax))
+end)
+
+RegisterServerEvent('serrulata-atmrobbery:server:success2', function()
+    local src = source
+	local Player =  QBCore.Functions.GetPlayer(source)
+    local bags = 1
+	local info = {
+		worth = math.random(Config.PaymentMin, Config.PaymentMax)
+	}
+	Player.Functions.AddItem('markedbills', bags, false, info)
+    Player.Functions.RemoveItem(HackItem, 1)
+    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add")
 end)
