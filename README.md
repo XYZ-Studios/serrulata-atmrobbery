@@ -10,7 +10,7 @@ ensure sserrulata-atmrobbery
 ```
 
 # Config
-![Serrulata]https://imgur.com/a/oulegc6
+![Serrulata](https://imgur.com/a/oulegc6)
 
 
 # Dependencies (QBCore)
