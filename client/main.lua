@@ -1,5 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local CurrentCops = 0
+local HackingTime = Config.HackingTime*1000
 
 RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
@@ -9,58 +10,55 @@ local models = {
     'prop_atm_01',
     'prop_atm_02',
     'prop_atm_03',
-    'prop_fleeca_atm',
+    'prop_fleeca_atm'
 }
 exports['qb-target']:AddTargetModel(models, {
-    options = { 
-      {
+    options = {
+        {
         type = "client",
-        event = "serrulata-atmrobbery:client:robatm",
+        event = "serrulata-atmrobbery:robatm",
+        icon = 'fa-sharp fa-solid fa-arrow-up-from-bracket',
         label = 'Rob ATM',
-      }
+        item = Config.HackItem,
+        }
     },
-    distance = 2.0,
+  distance = 2.5,
 })
 
-RegisterNetEvent('serrulata-atmrobbery:client:robatm', function()
-	local pos = GetEntityCoords(PlayerPedId())
-    local hasItem = QBCore.Functions.HasItem(Config.HackItem)
-        if CurrentCops >= Config.Cops then
-            QBCore.Functions.TriggerCallback("serrulata:server:Cooldown",function(isCooldown)
-            if not isCooldown then
-                if hasItem then
-                    local Player = GetEntityCoords(PlayerPedId())
-                    exports["ps-dispatch"]:CustomAlert({
-                        coords = pos,
-                        message = "ATM Robbery",
-                        dispatchCode = "10-31",
-                        description = "Robbery In progress",
-                        radius = 0,
-                        sprite = 108,
-                        color = 1,
-                        scale = 0.7,
-                        length = 3,
-                    })
-                    exports['ps-ui']:Scrambler(function(success)  
-                        if success then
-                            ClearPedTasksImmediately(PlayerPedId())
-                            TriggerEvent('serrulata-atmrobbery:hacksuccess')
-                        else
-                            Citizen.Wait(1000)
-                            ClearPedTasksImmediately(PlayerPedId())
-                            TriggerEvent('serrulata-atmrobbery:hackfailed')
-                        end
-                    end, Config.HackType, Config.HackTime, 0)
+
+
+RegisterNetEvent('serrulata-atmrobbery:robatm', function()
+    TriggerEvent('serrulata-atmrobbery:police2')
+    if CurrentCops >= Config.Cops then
+        QBCore.Functions.TriggerCallback("serrulata-atmrobbery:server:Cooldown",function(isCooldown)
+        if not isCooldown then
+            TriggerEvent('animations:client:EmoteCommandStart', {"parkingmeter"})
+            QBCore.Functions.Progressbar('cnct_elect', 'Hacking the ATM...', HackingTime, false, true, {
+                disableMovement = true,
+                disableCarMovement = true,
+                disableMouse = false,
+                disableCombat = true,
+            }, {}, {}, {}, function()
+            end)
+            Wait(HackingTime)
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            exports['ps-ui']:Scrambler(function(success)
+                if success then
+                    ClearPedTasksImmediately(PlayerPedId())
+                    TriggerEvent('serrulata-atmrobbery:hacksuccess')
                 else
-                    QBCore.Functions.Notify("You don't seem to have the right tools for this", "error")
+                    Wait(1000)
+                    ClearPedTasksImmediately(PlayerPedId())
+                    TriggerEvent('serrulata-atmrobbery:hackfailed')
                 end
-            else
-                QBCore.Functions.Notify("not enough police", "error")
-            end
+            end, Config.HackType, Config.HackTime, 0)
         else
             QBCore.Functions.Notify("The ATM seems to have already been robbed")
         end
-    end)
+        end)
+    else
+        QBCore.Functions.Notify("Not Enough Police", "error")
+    end
 end)
 
 
@@ -99,10 +97,29 @@ RegisterNetEvent('serrulata-atmrobbery:hackfailed', function(data)
 	TriggerServerEvent("evidence:server:CreateFingerDrop", GetPedBoneCoords(PlayerPedId))
 end)
 
+RegisterNetEvent('serrulata-atmrobbery:police2', function(data)
+    exports["ps-dispatch"]:CustomAlert({
+        coords = GetEntityCoords(PlayerPedId()),
+        message = "Attempted ATM Robbery",
+        dispatchCode = "10-31",
+        description = "Attempted Robbery",
+        radius = 0,
+        sprite = 108,
+        color = 1,
+        scale = 0.7,
+        length = 3,
+    })
+end)
+
 RegisterNetEvent('serrulata-atmrobbery:hacksuccess', function(data)
 	QBCore.Functions.Notify("You did it! Now Grab the cash and get out of here!")
     ClearPedTasksImmediately(PlayerPedId())
 	ATMRobbery()
-	TriggerServerEvent("serrulata-atmrobbery:server:success")	
+    Wait(7500)
     TriggerServerEvent('serrulata-atmrobbery:Server:timer')
+    if Config.MoneyType == true then
+	    TriggerServerEvent("serrulata-atmrobbery:server:success")
+    else
+        TriggerServerEvent("serrulata-atmrobbery:server:success2")
+    end
 end)
