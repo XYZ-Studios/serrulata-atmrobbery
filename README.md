@@ -10,7 +10,7 @@ ensure sserrulata-atmrobbery
 ```
 
 # Config
-![Serrulata]
+![Serrulata]https://imgur.com/a/oulegc6
 
 
 # Dependencies (QBCore)
@@ -20,7 +20,7 @@ ensure sserrulata-atmrobbery
 
 
 # Preview 
-[Serrulata-ATMRobbery]() 
+[Serrulata-ATMRobbery](https://streamable.com/4koo4w) 
 
 # Discord
 [![](https://dcbadge.vercel.app/api/server/NerdvuJDX7)](https://discord.gg/NerdvuJDX7)
