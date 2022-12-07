@@ -101,6 +101,8 @@ function hacksuccess()
 
     ATMRobbery()
 
+    DispatchCalled()
+
     Wait(7500)
 
     TriggerServerEvent('serrulata-atmrobbery:server:timer')
