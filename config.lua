@@ -1,5 +1,8 @@
 Config = {}
 
+Config.Framework = 'QBCore'  -- Framework to use (QBCore or OX)
+Config.Dispatch = 'ps-dispatch' -- Dispatch that you use (ps-dispatch or cd_dispatch)
+
 Config.HackItem = 'thermite' -- Item required to do the robbery (Change Label to something fitting if you change this)
 Config.HackType = 'greek' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
 Config.HackTime = 25 --how long to do minigame
