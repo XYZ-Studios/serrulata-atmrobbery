@@ -4,6 +4,8 @@ game 'gta5'
 name 'Serrulata-Studios'
 author 'CuzzeeTV#4169 & MoneSuper#0001'
 description 'Serrulata-ATMRobbery'
+repository 'https://github.com/Serrulata-Studios/serrulata-atmrobbery'
+
 version '1.0.1'
 
 shared_script 'config.lua'
