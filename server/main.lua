@@ -52,7 +52,7 @@ end)
 AddEventHandler('onResourceStart', function(resource)
    if resource == GetCurrentResourceName() then
     local version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
-    PerformHttpRequest('https://raw.githubusercontent.com/Serrulata/serrulata-atmrobbery/master/version.txt', function(err, text, headers)
+    PerformHttpRequest('https://github.com/Serrulata-Studios/serrulata-atmrobbery/blob/main/version.txt', function(err, text, headers)
        if text ~= version then
           print('^1[ERROR]^3 Your version of serrulata-atmrobbery is outdated. Please download the latest version from our Github^7')
        else
