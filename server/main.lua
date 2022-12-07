@@ -50,17 +50,20 @@ RegisterServerEvent('serrulata-atmrobbery:server:success2', function()
 end)
 --------------------------------------------------------------------------------------- # Start / Stop Resoure # ----------------------------------------------------------------------------
 AddEventHandler('onResourceStart', function(resource)
-   if resource == GetCurrentResourceName() then
-    local version = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
-    PerformHttpRequest('https://github.com/Serrulata-Studios/serrulata-atmrobbery/blob/main/version.txt', function(err, text, headers)
-       if text ~= version then
-          print('^1[ERROR]^3 Your version of serrulata-atmrobbery is outdated. Please download the latest version from our Github^7')
-       else
-          print('^2[INFO]^3 serrulata-atmrobbery is up to date. Version: ^2'..version..' ^3- ^2https://github.com/Serrulata/serrulata-atmrobbery^7')
-       end
-    end, 'GET', '', {version = 'this'})
-   end
+    if resource == GetCurrentResourceName() then
+        PerformHttpRequest('https://raw.githubusercontent.com/DevSerrulata/serrulata-atmrobbery/master/version.txt', function(errorCode, result, headers)
+            local version = LoadResourceFile(GetCurrentResourceName(), '1.0.1')
+            if result ~= version then
+                print("-----------------------------------------------------")
+                print("serrulata-atmrobbery is outdated, please update it!")
+                print("-----------------------------------------------------")
+            else
+                print("serrulata-atmrobbery is up to date!")
+            end
+        end)
+    end
 end)
+
 
 --------------------------------------------------------------------------------------- # Callbacks # ---------------------------------------------------------------------------------------
 QBCore.Functions.CreateCallback("serrulata-atmrobbery:server:Cooldown",function(source, cb)
