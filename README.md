@@ -11,7 +11,7 @@ Before you drag and drop the script your requirement to have listed below
 
 Add the following code to your server.cfg/resouces.cfg
 ```
-ensure sserrulata-atmrobbery
+ensure serrulata-atmrobbery
 ```
 
 # **Config Preview**
