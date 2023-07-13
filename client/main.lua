@@ -99,14 +99,27 @@ function hacksuccess()
 
     ClearPedTasksImmediately(PlayerPedId())
 
-    ATMRobbery()
+    Anim = true
+    QBCore.Functions.Progressbar("power_hack", "Taking money...", (7500), false, true, {
+        disableMovement = true,
+        disableCarMovement = true,
+        disableMouse = false,
+        disableCombat = true,
+    }, {
+        animDict = "anim@heists@ornate_bank@grab_cash_heels",
+        anim = "grab",
+        flags = 16,
+    }, {
+       model = "prop_cs_heist_bag_02",
+       bone = 57005,
+       coords = { x = -0.005, y = 0.00, z = -0.16 },
+       rotation = { x = 250.0, y = -30.0, z = 0.0 },
 
-    DispatchCalled()
 
-    Wait(7500)
-
-    TriggerServerEvent('serrulata-atmrobbery:server:timer')
-
+    }, {}, function()
+        Anim = false
+        StopAnimTask(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
+		SetPedComponentVariation((PlayerPedId()), 5, 47, 0, 0)
     if Config.MoneyType == true then
 
 	    TriggerServerEvent("serrulata-atmrobbery:server:success")
@@ -114,8 +127,21 @@ function hacksuccess()
     else
 
         TriggerServerEvent("serrulata-atmrobbery:server:success2")
+    	DispatchCalled()
 
+    	Wait(7500)
+
+    	TriggerServerEvent('serrulata-atmrobbery:server:timer')
     end
+    end, function()
+        Anim = false
+        StopAnimTask(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
+	    DispatchCalled()
+
+    	Wait(7500)
+
+    	TriggerServerEvent('serrulata-atmrobbery:server:timer')
+    end)
 end
 
 function hackfailed(data)
