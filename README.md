@@ -17,10 +17,10 @@ ensure serrulata-atmrobbery
 
 # **Shared/Config.lua**
 
-![Serrulata](https://i.imgur.com/499durz.png)
+![Serrulata](https://i.imgur.com/fvVmDcx.png)
 
 # **Client/Modules/Config.lua**
-![Serrulata](https://i.imgur.com/DG6bsoW.png)
+![Serrulata](https://i.imgur.com/wOo70Ve.png)
 
 
 # **Dependencies**
