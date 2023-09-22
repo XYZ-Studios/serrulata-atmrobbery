@@ -2,11 +2,6 @@ local QBCore = require "client.modules.core" local Config = require "client.modu
 local CurrentCops = 0
 local HackingTime = Config.HackingTime*1000
 
-local isRobbing = false
-local cooldownActive = false
-local cooldownTime = 0
-local cooldowns = {}
-
 local models = {
     'prop_atm_01',
     'prop_atm_02',
@@ -123,7 +118,6 @@ function AnimationRun()
         StopAnimTask(cache.ped, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
     end)
 end
-
 
 function ATMRobbery()
     local playerPed = cache.ped
