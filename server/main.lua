@@ -1,21 +1,67 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
-local MoneyType = Config.MoneyType
-local HackItem = Config.HackItem
-local CoolDown = false
+local QBCore = exports['qbx-core']:GetCoreObject() lib.locale() local HackItem = Config.HackItem
+local ATM = {} local CoolDown = {} 
 
 
---------------------------------------------------------------------------------------- # Events # ---------------------------------------------------------------------------------------
-RegisterServerEvent('serrulata-atmrobbery:server:timer', function()
-    CoolDown = true
-    local timer = Config.CoolDown * (60 * 1000)
-    while timer > 0 do
-        Wait(1000)
-        timer = timer - 1000
-        if timer == 0 then
-            CoolDown = false
+function IsATMInTable(atmObjectNetId)
+    for i, v in ipairs(ATM) do
+        if v == atmObjectNetId then
+            return true
         end
     end
+    return false
+end
+
+RegisterServerEvent('serrulata-atmrobbery:server:startRobbery', function(atmObjectNetId)
+    local src = source
+    local objecid = atmObjectNetId
+
+    if not IsATMInTable(objecid) then
+        table.insert(ATM, objecid)
+
+        print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. objecid .. ' is now in the table')
+
+        TriggerEvent('serrulata-atmrobbery:server:timer', atmObjectNetId)
+        TriggerClientEvent('serrulata-atmrobbery:client:robbingatming', src, atmObjectNetId)
+    else
+        if CoolDown[objecid] then
+            TriggerClientEvent('ox_lib:notify', src, {description = locale('atm_cooldownmsg'), type = 'error'})
+        else
+            print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. objecid .. ' is already in the table.')
+        end
+    end
+
+    for i, v in ipairs(ATM) do
+        print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. v .. ' is now in the table.')
+    end
+end)
+
+RegisterServerEvent('serrulata-atmrobbery:server:timer', function(atmObjectNetId)
+    if CoolDown[atmObjectNetId] == nil then
+        CoolDown[atmObjectNetId] = true
+        local timer = Config.CoolDown * (60 * 1000)
+        while timer > 0 do
+            Wait(1000)
+            timer = timer - 1000
+        end
+        CoolDown[atmObjectNetId] = false
+        print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. atmObjectNetId .. ' is now available.')
+
+        for i, v in ipairs(ATM) do
+            if v == atmObjectNetId then
+                table.remove(ATM, i)
+                print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. atmObjectNetId .. ' removed from table.')
+                break 
+            end
+        end
+    end
+end)
+
+-- Reward System  / Item Removal
+RegisterNetEvent("serrulata-atmrobbery:server:reward",function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    Player.Functions.AddMoney('cash', math.random(Config.PaymentMin, Config.PaymentMax))
+    TriggerClientEvent('ox_lib:notify', src, {description = locale('success_money'), type = 'success'})
 end)
 
 RegisterNetEvent('serrulata-atmrobbery:server:removeitem', function()
@@ -30,46 +76,16 @@ RegisterNetEvent('serrulata-atmrobbery:server:giveitemback', function()
     Player.Functions.AddItem(HackItem, 1)
 end)
 
-RegisterNetEvent("serrulata-atmrobbery:server:success",function()
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    
-    Player.Functions.AddMoney('cash', math.random(Config.PaymentMin, Config.PaymentMax))
-end)
-
-RegisterServerEvent('serrulata-atmrobbery:server:success2', function()
-    local src = source
-	local Player =  QBCore.Functions.GetPlayer(source)
-    local bags = 1
-	local info = {
-		worth = math.random(Config.PaymentMin, Config.PaymentMax)
-	}
-	Player.Functions.AddItem('markedbills', bags, false, info)
-    Player.Functions.RemoveItem(HackItem, 1)
-    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add")
-end)
---------------------------------------------------------------------------------------- # Start / Stop Resoure # ----------------------------------------------------------------------------
+-- Console Events
+-- Starting Events 
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
-        PerformHttpRequest('https://raw.githubusercontent.com/DevSerrulata/serrulata-atmrobbery/master/version.txt', function(errorCode, result, headers)
-            local version = LoadResourceFile(GetCurrentResourceName(), '1.0.2')
-            if result ~= version then
-                print("-----------------------------------------------------")
-                print("serrulata-atmrobbery is outdated, please update it!")
-                print("-----------------------------------------------------")
-            else
-                print("serrulata-atmrobbery is up to date!")
-            end
-        end)
+       print('[^2Serrulata ATM Robbery^7] Started ^2Successfully^7')
     end
-end)
-
-
---------------------------------------------------------------------------------------- # Callbacks # ---------------------------------------------------------------------------------------
-QBCore.Functions.CreateCallback("serrulata-atmrobbery:server:Cooldown",function(source, cb)
-    if CoolDown then
-        cb(true)
-    else
-        cb(false)
+ end)
+ 
+ AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+         print('[^2Serrulata ATM Robbery^7] Stopped ^2Successfully^7')
     end
-end)
+ end)
