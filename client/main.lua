@@ -142,6 +142,7 @@ function ATMRobbery()
         local atmObjectNetId = NetworkGetNetworkIdFromEntity(closestATMObject)
 
         TriggerServerEvent('serrulata-atmrobbery:server:startRobbery', atmObjectNetId)
+        TriggerServerEvent('serrulata-atmrobbery:server:removeitem')
     else
         print('[^1Serrulata ATM Robbery^7] Error: No ATM found nearby')
     end
@@ -173,7 +174,7 @@ RegisterNetEvent('serrulata-atmrobbery:client:robatm', function()
 
             if lib.progressBar({duration = HackingTime, label = locale('progbar_label'), useWhileDead = false, canCancel = true, disable = {car = true,},
             
-            }) then TriggerServerEvent('serrulata-atmrobbery:server:removeitem') ATMRobbery() else print('Canceled') end
+            }) then ATMRobbery() else print('Canceled') end
 
         else
             lib.notify({title = locale('no_cops'), type = 'error'})
