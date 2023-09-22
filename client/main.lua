@@ -142,7 +142,6 @@ function ATMRobbery()
         local atmObjectNetId = NetworkGetNetworkIdFromEntity(closestATMObject)
 
         TriggerServerEvent('serrulata-atmrobbery:server:startRobbery', atmObjectNetId)
-        TriggerServerEvent('serrulata-atmrobbery:server:removeitem')
     else
         print('[^1Serrulata ATM Robbery^7] Error: No ATM found nearby')
     end
@@ -150,6 +149,8 @@ end
 
 RegisterNetEvent('serrulata-atmrobbery:client:robbingatming', function(isCoolDown)
     local src = source
+    TriggerServerEvent('serrulata-atmrobbery:server:removeitem')
+    
     exports['ps-ui']:Scrambler(function(success)
         if success then
             AnimationRun()

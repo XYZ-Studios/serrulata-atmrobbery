@@ -25,7 +25,6 @@ RegisterServerEvent('serrulata-atmrobbery:server:startRobbery', function(atmObje
     else
         if CoolDown[objecid] then
             TriggerClientEvent('ox_lib:notify', src, {description = locale('atm_cooldownmsg'), type = 'error'})
-            TriggerEvent('serrulata-atmrobbery:server:giveitemback')
         else
             print('[^2Serrulata ATM Robbery^7] ATM with ID ' .. objecid .. ' is already in the table.')
         end
