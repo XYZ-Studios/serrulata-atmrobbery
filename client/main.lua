@@ -80,7 +80,7 @@ function Dispatching()
         })
     elseif Config.Dispatch == 'custom' then 
         print('Insert your dispatch code here')
-        print('Am at line 72 in client/main.lua')
+        print('Am at line 83 in client/main.lua')
     end
 end
 
@@ -103,7 +103,7 @@ function AnimationRun()
             exports.scully_emotemenu:cancelEmote()
         elseif Config.Emotes == 'custom' then 
             print('Insert your emote here')
-            print('Am at line 90 in client/main.lua')
+            print('Am at line 106 in client/main.lua')
         end
 
     end, function()
@@ -112,7 +112,7 @@ function AnimationRun()
             exports.scully_emotemenu:cancelEmote()
         elseif Config.Emotes == 'custom' then 
             print('Insert your emote here')
-            print('Am at line 99 in client/main.lua')
+            print('Am at line 115 in client/main.lua')
         end
 
         StopAnimTask(cache.ped, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
@@ -170,7 +170,7 @@ RegisterNetEvent('serrulata-atmrobbery:client:robatm', function()
                 exports.scully_emotemenu:playEmoteByCommand('parkingmeter')
             elseif Config.Emotes == 'custom' then 
                 print('Insert your emote here')
-                print('Am at line 123 in client/main.lua')
+                print('Am at line 173 in client/main.lua')
             end
 
             if lib.progressBar({duration = HackingTime, label = locale('progbar_label'), useWhileDead = false, canCancel = true, disable = {car = true,},
