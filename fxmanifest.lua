@@ -2,25 +2,22 @@ fx_version 'cerulean'
 game 'gta5'
 
 name 'Serrulata-Studios'
-author 'CuzzeeTV#4169 & MoneSuper#0001'
+author 'MoneSuper#0001'
 description 'Serrulata-ATMRobbery'
 repository 'https://github.com/Serrulata-Studios/serrulata-atmrobbery'
 
-version '1.0.1'
+version '2.0.0'
 
-shared_script 'config.lua'
 
-server_script 'server/*.lua'
+client_scripts {'client/*.lua'}
 
-client_scripts {
-    'client/*.lua',
-    '@PolyZone/client.lua',
-    '@PolyZone/BoxZone.lua',
-    '@PolyZone/CircleZone.lua',
-}
+shared_scripts {'@ox_lib/init.lua', 'shared/config.lua'}
 
-dependencies {
-    'ps-ui'
+server_script {'server/*.lua'}
+
+files {
+    "client/modules/*.lua",
+    'locales/*.json'
 }
 
 lua54 'yes'

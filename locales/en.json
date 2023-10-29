@@ -1,0 +1,12 @@
+{
+    "target_label": "Hack ATM",
+    "progbar_label": "Connecting to ATM",
+
+    "no_cops": "There are no cops online to currently rob an ATM",
+
+    "dispatch_msg": "Attempted ATM Robbery",
+    "dispach_dec": "Attempted Robbery",
+
+    "atm_cooldownmsg": "This ATM is not usable yet. Please wait a few minutes and try again.",
+    "success_money": "You have successfully hacked the ATM and received some cash$"
+}

@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = require "client.modules.core" local Config = require "client.modules.config" lib.locale() isLoggedIn = LocalPlayer.state.isLoggedIn
 local CurrentCops = 0
 local HackingTime = Config.HackingTime*1000
 
@@ -9,35 +9,23 @@ local models = {
     'prop_fleeca_atm'
 }
 
-
-RegisterNetEvent('police:SetCopCount', function(amount)
-    CurrentCops = amount
-end)
-
----------------------------------------------------------------------------------------# Target #---------------------------------------------------------------------------------------
-if Config.Framework == 'QBCore' then
+if Config.Target == 'qb-target' then 
     exports['qb-target']:AddTargetModel(models, {
         options = {
             {
             type = "client",
-            event = "serrulata-atmrobbery:robatm",
+            event = "serrulata-atmrobbery:client:robatm",
             icon = 'fa-sharp fa-solid fa-arrow-up-from-bracket',
-            label = 'Rob ATM',
+            label = locale('target_label'),
             item = Config.HackItem,
             }
         },
       distance = 2.5,
     })
 
-elseif Config.Framework == 'OX' then
-
+elseif Config.Target == 'ox-target' then 
     local options = {
-
-        {
-            event = 'serrulata-atmrobbery:robatm',
-            icon = 'fa-sharp fa-solid fa-arrow-up-from-bracket',
-            label = 'Rob ATM',
-            distance = 1.0,
+        {event = 'serrulata-atmrobbery:client:robatm', icon = 'fa-sharp fa-solid fa-arrow-up-from-bracket', label = locale('target_label'), distance = 2.0,
             canInteract = function(entity, distance, coords, name, bone)
                 local item = QBCore.Functions.HasItem(Config.HackItem)
                 if item then
@@ -48,19 +36,21 @@ elseif Config.Framework == 'OX' then
             end
         },
     }
-
     exports.ox_target:addModel(models, options)
-
 end
---------------------------------------------------------------------------------------- # Functions # ---------------------------------------------------------------------------------------
-function DispatchCalled()
-    if Config.Dispatch == 'ps-dispatch' then
-         
+
+RegisterNetEvent('police:SetCopCount', function(amount)
+    CurrentCops = amount
+end)
+
+--  Functions
+function Dispatching()
+    if Config.Dispatch == 'ps-dispatch' then 
         exports["ps-dispatch"]:CustomAlert({
-            coords = GetEntityCoords(PlayerPedId()),
-            message = "Attempted ATM Robbery",
+            coords = GetEntityCoords(cache.ped()),
+            message = locale('dispatch_msg'),
             dispatchCode = "10-31",
-            description = "Attempted Robbery",
+            description = locale('dispach_dec'),
             radius = 0,
             sprite = 108,
             color = 1,
@@ -68,8 +58,7 @@ function DispatchCalled()
             length = 3,
         })
 
-    elseif Config.Dispatch == 'cd_dispatch' then
-
+    elseif Config.Dispatch == 'cd_dispatch' then 
         local data = exports['cd_dispatch']:GetPlayerInfo()
 
         TriggerServerEvent('cd_dispatch:AddNotification', {
@@ -89,49 +78,14 @@ function DispatchCalled()
                 sound = 1,
             }
         })
-
+    elseif Config.Dispatch == 'custom' then 
+        print('Insert your dispatch code here')
+        print('Am at line 83 in client/main.lua')
     end
 end
 
-function hacksuccess()
 
-    QBCore.Functions.Notify("You did it! Now Grab the cash and get out of here!")
-
-    ClearPedTasksImmediately(PlayerPedId())
-
-    ATMRobbery()
-
-    DispatchCalled()
-
-    Wait(7500)
-
-    TriggerServerEvent('serrulata-atmrobbery:server:timer')
-
-    if Config.MoneyType == true then
-
-	    TriggerServerEvent("serrulata-atmrobbery:server:success")
-
-    else
-
-        TriggerServerEvent("serrulata-atmrobbery:server:success2")
-
-    end
-end
-
-function hackfailed(data)
-    
-    QBCore.Functions.Notify("Seems Like you failed...", 'error')
-
-	-- TriggerServerEvent("evidence:server:CreateFingerDrop", GetPedBoneCoords(PlayerPedId)) -- questionable  event if it works
-
-    TriggerServerEvent('serrulata-atmrobbery:server:giveitemback')
-
-    DispatchCalled()
-    
-end
-
-function ATMRobbery()
-    Anim = true
+function AnimationRun()
     QBCore.Functions.Progressbar("power_hack", "Taking money...", (7500), false, true, {
         disableMovement = true,
         disableCarMovement = true,
@@ -141,97 +95,90 @@ function ATMRobbery()
         animDict = "anim@heists@ornate_bank@grab_cash_heels",
         anim = "grab",
         flags = 16,
-    }, {
-       model = "prop_cs_heist_bag_02",
-       bone = 57005,
-       coords = { x = -0.005, y = 0.00, z = -0.16 },
-       rotation = { x = 250.0, y = -30.0, z = 0.0 },
-
-
     }, {}, function()
-        Anim = false
-        StopAnimTask(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
-		SetPedComponentVariation((PlayerPedId()), 5, 47, 0, 0)
+        StopAnimTask(cache.ped, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
+		SetPedComponentVariation((cache.ped), 5, 47, 0, 0)
+
+        if Config.Emotes == 'scully_emotemenu' then
+            exports.scully_emotemenu:cancelEmote()
+        elseif Config.Emotes == 'custom' then 
+            print('Insert your emote here')
+            print('Am at line 106 in client/main.lua')
+        end
 
     end, function()
-        Anim = false
-        StopAnimTask(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
-		
+
+        if Config.Emotes == 'scully_emotemenu' then
+            exports.scully_emotemenu:cancelEmote()
+        elseif Config.Emotes == 'custom' then 
+            print('Insert your emote here')
+            print('Am at line 115 in client/main.lua')
+        end
+
+        StopAnimTask(cache.ped, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
     end)
 end
 
----------------------------------------------------------------------------------------# Events #---------------------------------------------------------------------------------------
-RegisterNetEvent('serrulata-atmrobbery:robatm', function()
-    if Config.Framework == 'QBCore' or 'OX' then
-        
-        if CurrentCops >= Config.Cops then
+function ATMRobbery()
+    local playerPed = cache.ped
+    local playerCoords = GetEntityCoords(GetPlayerPed(-1))
+    local closestATMObject = nil
+    local closestDistance = 999.0 
 
-            QBCore.Functions.TriggerCallback("serrulata-atmrobbery:server:Cooldown",function(isCooldown)
-                if not isCooldown then
+    for _, model in ipairs(models) do
+        local atmObject = GetClosestObjectOfType(playerCoords.x, playerCoords.y, playerCoords.z, 5.0, GetHashKey(model), false, false, false)
 
-                    TriggerEvent('animations:client:EmoteCommandStart', {"parkingmeter"})
-                    TriggerServerEvent('serrulata-atmrobbery:server:removeitem')
+        if DoesEntityExist(atmObject) then
+            local distance = #(playerCoords - GetEntityCoords(atmObject))
 
-                    QBCore.Functions.Progressbar('cnct_elect', 'Hacking the ATM...', HackingTime, false, true, {
-                        disableMovement = true,
-
-                        disableCarMovement = true,
-
-                        disableMouse = false,
-
-                        disableCombat = true,
-
-                    }, {}, {}, {}, function()
-
-                end)
-
-                Wait(HackingTime) 
-
-                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-
-                exports['ps-ui']:Scrambler(function(success)
-
-                    if success then
-
-                        ClearPedTasksImmediately(PlayerPedId())
-
-                        hacksuccess()
-                        
-                    else
-
-                        Wait(1000)
-
-                        ClearPedTasksImmediately(PlayerPedId())
-
-                        hackfailed()
-
-                    end
-                end, Config.HackType, Config.HackTime, 0)
-
-            else
-
-                QBCore.Functions.Notify("The ATM seems to have already been robbed")
-
+            if distance < closestDistance then
+                closestATMObject = atmObject
+                closestDistance = distance
             end
-
-        end)
-
-        else
-            QBCore.Functions.Notify("Not Enough Police", "error")
         end
-
     end
 
-end)
----------------------------------------------------------------------------------------# Start/Stop Resource #---------------------------------------------------------------------------------------
-AddEventHandler('onResourceStart', function(resource)
-   if resource == GetCurrentResourceName() then
-      print('Serrulata ATM Robbery: Started')
-   end
+    if closestATMObject then
+        local atmObjectNetId = NetworkGetNetworkIdFromEntity(closestATMObject)
+
+        TriggerServerEvent('serrulata-atmrobbery:server:startRobbery', atmObjectNetId)
+    else
+        print('[^1Serrulata ATM Robbery^7] Error: No ATM found nearby')
+    end
+end
+
+RegisterNetEvent('serrulata-atmrobbery:client:robbingatming', function(isCoolDown)
+    local src = source
+    TriggerServerEvent('serrulata-atmrobbery:server:removeitem')
+    
+    exports['ps-ui']:Scrambler(function(success)
+        if success then
+            AnimationRun()
+            TriggerServerEvent('serrulata-atmrobbery:server:reward')
+        else
+            Dispatching()
+            TriggerServerEvent('serrulata-atmrobbery:server:giveitemback')
+        end
+    end, Config.HackType, Config.HackTime, 0)
 end)
 
-AddEventHandler('onResourceStop', function(resource)
-   if resource == GetCurrentResourceName() then
-        print('Serrulata ATM Robbery: Stopped')
-   end
+RegisterNetEvent('serrulata-atmrobbery:client:robatm', function()
+    if Config.Framework == 'QBCore' or 'QBX' then 
+        if CurrentCops >= Config.Cops then
+
+            if Config.Emotes == 'scully_emotemenu' then
+                exports.scully_emotemenu:playEmoteByCommand('parkingmeter')
+            elseif Config.Emotes == 'custom' then 
+                print('Insert your emote here')
+                print('Am at line 173 in client/main.lua')
+            end
+
+            if lib.progressBar({duration = HackingTime, label = locale('progbar_label'), useWhileDead = false, canCancel = true, disable = {car = true,},
+            
+            }) then ATMRobbery() else print('Canceled') end
+
+        else
+            lib.notify({title = locale('no_cops'), type = 'error'})
+        end
+    end
 end)
